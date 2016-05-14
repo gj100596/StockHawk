@@ -1,6 +1,8 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +26,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class DetailActivity extends Activity {
+
+    private static final int DAY = 1;
+    private static final int WEEK = 2;
+    private static final int MONTH = 3;
+    private static final int YEAR = 4;
+    private static final int FIVE_YEAR = 5;
+    private static final int MAX = 6;
+
 
     String symbol, startDate, endDate;
     private OkHttpClient client = new OkHttpClient();
@@ -51,48 +61,83 @@ public class DetailActivity extends Activity {
 
         quote = new ArrayList<>();
 
+        makeBold(YEAR);
         fillJsonData("1y");
 
         day.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeBold(DAY);
                 getDayContent();
             }
         });
         week.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeBold(WEEK);
                 getWeekContent();
             }
         });
         month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeBold(MONTH);
                 getMonthContent();
             }
         });
         year.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeBold(YEAR);
                 getYearContent();
             }
         });
         fiveYear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeBold(FIVE_YEAR);
                 getfiveYearContent();
             }
         });
         max.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeBold(MAX);
                 getMaxContent();
             }
         });
 
     }
 
-    public void makeBold(){
+    public void makeBold(int no){
+        day.setTypeface(Typeface.DEFAULT);
+        week.setTypeface(Typeface.DEFAULT);
+        year.setTypeface(Typeface.DEFAULT);
+        fiveYear.setTypeface(Typeface.DEFAULT);
+        max.setTypeface(Typeface.DEFAULT);
+        month.setTypeface(Typeface.DEFAULT);
+
+        switch (no){
+            case DAY:
+                day.setTypeface(null,Typeface.BOLD);
+                break;
+            case WEEK:
+                week.setTypeface(null,Typeface.BOLD);
+                break;
+            case MONTH:
+                month.setTypeface(null,Typeface.BOLD);
+                break;
+            case YEAR:
+                year.setTypeface(null,Typeface.BOLD);
+                break;
+            case FIVE_YEAR:
+                fiveYear.setTypeface(null,Typeface.BOLD);
+                break;
+            case MAX:
+                max.setTypeface(null,Typeface.BOLD);
+                break;
+        }
+
     }
 
     public void getDayContent(){ fillJsonData("1d"); }
@@ -116,8 +161,8 @@ public class DetailActivity extends Activity {
                             response = response.replace("finance_charts_json_callback( ", "");
                             response = response.replace("\n", "");
                             JSONObject answer = new JSONObject(response.substring(0, response.length() - 2));
-                            //answer = answer.getJSONObject("meta");
                             JSONArray quoteArray = answer.getJSONArray("series");
+                            quote = new ArrayList<>();
                             for (int i = 0; i < quoteArray.length(); i++)
                                 quote.add(quoteArray.getJSONObject(i));
 
@@ -139,12 +184,21 @@ public class DetailActivity extends Activity {
     }
 
     private void createChart() {
+
+        chart.clearAnimation();
+
+        chart.setBackgroundColor(Color.WHITE);
+
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
+        boolean dateParam = quote.get(0).has("Date");
         for (int i = 0; i < quote.size(); i++) {
             try {
                 entries.add(new Entry((float) quote.get(i).getDouble("close"), i));
-                labels.add(quote.get(i).getString("Date"));
+                if(dateParam)
+                    labels.add(quote.get(i).getString("Date"));
+                else
+                    labels.add(quote.get(i).getString("Timestamp"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -152,7 +206,7 @@ public class DetailActivity extends Activity {
         LineDataSet dataset = new LineDataSet(entries, "Stock Rate");
         LineData data = new LineData(labels, dataset);
         chart.setData(data);
-
+        chart.animateX(1000);
     }
 
 
