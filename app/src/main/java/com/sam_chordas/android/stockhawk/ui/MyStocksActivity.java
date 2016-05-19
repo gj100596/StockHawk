@@ -73,7 +73,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mServiceIntent = new Intent(this, StockIntentService.class);
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
-            mServiceIntent.putExtra("tag", "init");
+            mServiceIntent.putExtra(getString(R.string.tag_intent_service_keyword), getString(R.string.tag_intent_service_answer_init));
             if (isConnected) {
                 startService(mServiceIntent);
             } else {
@@ -92,7 +92,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         if(isConnected) {
                             Intent detail = new Intent(MyStocksActivity.this, DetailActivity.class);
                             Bundle arg = new Bundle();
-                            arg.putString("Symbol",
+                            arg.putString(getString(R.string.symbol_intent_keyword),
                                     ((TextView) (((LinearLayout) v).getChildAt(0))).getText().toString());
                             detail.putExtras(arg);
                             startActivity(detail);
@@ -124,15 +124,15 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                             new String[]{input.toString()}, null);
                                     if (c.getCount() != 0) {
                                         Toast toast =
-                                                Toast.makeText(MyStocksActivity.this, "This stock is already saved!",
+                                                Toast.makeText(MyStocksActivity.this, R.string.saved_stock,
                                                         Toast.LENGTH_LONG);
                                         toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
                                         toast.show();
                                         return;
                                     } else {
                                         // Add the stock to DB
-                                        mServiceIntent.putExtra("tag", "add");
-                                        mServiceIntent.putExtra("symbol", input.toString());
+                                        mServiceIntent.putExtra(getString(R.string.tag_intent_service_keyword), getString(R.string.tag_intent_service_answer));
+                                        mServiceIntent.putExtra(getString(R.string.symbol_intent_service_keyword), input.toString());
                                         startService(mServiceIntent);
                                     }
                                 }
@@ -153,7 +153,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (isConnected) {
             long period = 3600L;
             long flex = 10L;
-            String periodicTag = "periodic";
+            String periodicTag = getString(R.string.periodic);
 
             // create a periodic task to pull stocks once every hour after the app has been opened. This
             // is so Widget data stays up to date.
@@ -181,9 +181,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public void networkToast() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Not Connected to Internet");
-        builder.setMessage("This Device is not connected to Internet. No Content might be shown or the content shown might be old");
-        builder.setPositiveButton("Ok", null);
+        builder.setTitle(getString(R.string.no_internet_title));
+        builder.setMessage(getString(R.string.no_internet_message));
+        builder.setPositiveButton(getString(R.string.no_internet_ok), null);
         builder.show();
 
         Toast.makeText(mContext, getString(R.string.network_toast), Toast.LENGTH_SHORT).show();

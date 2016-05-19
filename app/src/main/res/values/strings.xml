@@ -36,5 +36,14 @@
     <string name="stock_result_keyword" translatable="false">Stock Rate</string>
     <string name="input_prefill" />
     <string name="loading_chart">Data is Loading Please Wait!</string>
+    <string name="saved_stock">This stock is already saved!</string>
+    <string name="tag_intent_service_keyword">tag</string>
+    <string name="symbol_intent_service_keyword">symbol</string>
+    <string name="tag_intent_service_answer">add</string>
+    <string name="periodic">periodic</string>
+    <string name="no_internet_title">Not Connected to Internet</string>
+    <string name="no_internet_message">This Device is not connected to Internet. No Content might be shown or the content shown might be old</string>
+    <string name="no_internet_ok">Ok</string>
+    <string name="tag_intent_service_answer_init">init</string>
 
 </resources>
