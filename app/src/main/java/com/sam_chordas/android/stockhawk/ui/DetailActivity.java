@@ -23,7 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class DetailActivity extends Activity {
 
@@ -39,7 +42,7 @@ public class DetailActivity extends Activity {
     private OkHttpClient client = new OkHttpClient();
     ArrayList<JSONObject> quote;
     LineChart chart;
-    TextView day,week,month,year,fiveYear,max,symbolTextView;
+    TextView day, week, month, year, fiveYear, max, symbolTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +58,14 @@ public class DetailActivity extends Activity {
         symbolTextView = (TextView) findViewById(R.id.symbolInDetail);
 
         Bundle arg = getIntent().getExtras();
-        symbol = arg.getString("Symbol");
+        symbol = arg.getString(getString(R.string.symbol_intent_keyword));
 
         symbolTextView.setText(symbol);
 
         quote = new ArrayList<>();
 
-        makeBold(YEAR);
-        fillJsonData("1y");
+        makeBold(MONTH);
+        fillJsonData("1m");
 
         day.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +112,7 @@ public class DetailActivity extends Activity {
 
     }
 
-    public void makeBold(int no){
+    public void makeBold(int no) {
         day.setTypeface(Typeface.DEFAULT);
         week.setTypeface(Typeface.DEFAULT);
         year.setTypeface(Typeface.DEFAULT);
@@ -117,35 +120,65 @@ public class DetailActivity extends Activity {
         max.setTypeface(Typeface.DEFAULT);
         month.setTypeface(Typeface.DEFAULT);
 
-        switch (no){
+        day.setTextColor(Color.WHITE);
+        week.setTextColor(Color.WHITE);
+        year.setTextColor(Color.WHITE);
+        fiveYear.setTextColor(Color.WHITE);
+        max.setTextColor(Color.WHITE);
+        month.setTextColor(Color.WHITE);
+
+        switch (no) {
             case DAY:
-                day.setTypeface(null,Typeface.BOLD);
+                day.setTypeface(null, Typeface.BOLD);
+                day.setTextColor(getResources().getColor(R.color.material_blue_500));
                 break;
             case WEEK:
-                week.setTypeface(null,Typeface.BOLD);
+                week.setTypeface(null, Typeface.BOLD);
+                week.setTextColor(getResources().getColor(R.color.material_blue_500));
                 break;
             case MONTH:
-                month.setTypeface(null,Typeface.BOLD);
+                month.setTypeface(null, Typeface.BOLD);
+                month.setTextColor(getResources().getColor(R.color.material_blue_500));
                 break;
             case YEAR:
-                year.setTypeface(null,Typeface.BOLD);
+                year.setTypeface(null, Typeface.BOLD);
+                year.setTextColor(getResources().getColor(R.color.material_blue_500));
                 break;
             case FIVE_YEAR:
-                fiveYear.setTypeface(null,Typeface.BOLD);
+                fiveYear.setTypeface(null, Typeface.BOLD);
+                fiveYear.setTextColor(getResources().getColor(R.color.material_blue_500));
                 break;
             case MAX:
-                max.setTypeface(null,Typeface.BOLD);
+                max.setTypeface(null, Typeface.BOLD);
+                max.setTextColor(getResources().getColor(R.color.material_blue_500));
                 break;
         }
 
     }
 
-    public void getDayContent(){ fillJsonData("1d"); }
-    public void getWeekContent(){ fillJsonData("7d"); }
-    public void getMonthContent(){ fillJsonData("1m"); }
-    public void getYearContent(){ fillJsonData("1y"); }
-    public void getfiveYearContent(){ fillJsonData("5y"); }
-    public void getMaxContent(){ fillJsonData("my"); }
+    public void getDayContent() {
+        fillJsonData("1d");
+    }
+
+    public void getWeekContent() {
+        fillJsonData("7d");
+    }
+
+    public void getMonthContent() {
+        fillJsonData("1m");
+    }
+
+    public void getYearContent() {
+        fillJsonData("1y");
+    }
+
+    public void getfiveYearContent() {
+        fillJsonData("5y");
+    }
+
+    public void getMaxContent() {
+        fillJsonData("my");
+    }
 
 
     void fillJsonData(String range) {
@@ -188,95 +221,37 @@ public class DetailActivity extends Activity {
         chart.clearAnimation();
 
         chart.setBackgroundColor(Color.WHITE);
-
+        chart.setDescription("");
+        chart.setNoDataText(getString(R.string.loading_chart));
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<String>();
-        boolean dateParam = quote.get(0).has("Date");
+        boolean dateParam = quote.get(0).has(getString(R.string.date_result_keyword));
         for (int i = 0; i < quote.size(); i++) {
             try {
-                entries.add(new Entry((float) quote.get(i).getDouble("close"), i));
-                if(dateParam)
-                    labels.add(quote.get(i).getString("Date"));
-                else
-                    labels.add(quote.get(i).getString("Timestamp"));
+                entries.add(new Entry((float) quote.get(i).getDouble(getString(R.string.close_result_keyword)), i));
+                StringBuilder yAxisText;
+                if (dateParam) {
+                    yAxisText = new StringBuilder(
+                            quote.get(i).getString(getString(R.string.date_result_keyword)));
+                    yAxisText.insert(4, "-");
+                    yAxisText.insert(7, "-");
+                } else {
+                    Timestamp ts = new Timestamp(Long.parseLong(quote.get(i).getString(getString(R.string.timestamp_result_keyword))));
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(new Date(ts.getTime()*1000));
+                    yAxisText = new StringBuilder(c.getTime().toString().substring(4,16));
+
+                }
+
+                labels.add(yAxisText.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        LineDataSet dataset = new LineDataSet(entries, "Stock Rate");
+        LineDataSet dataset = new LineDataSet(entries, getString(R.string.stock_result_keyword));
         LineData data = new LineData(labels, dataset);
         chart.setData(data);
         chart.animateX(1000);
     }
 
-
-    private void garbageWork() {
-        /*
-        StringBuilder urlStringBuilder = new StringBuilder();
-        try {
-
-            urlStringBuilder.append("https://query.yahooapis.com/v1/public/yql?q=");
-            urlStringBuilder.append(URLEncoder.encode("select * from yahoo.finance.quotes where symbol = "
-                    + symbol, "UTF-8"));
-            urlStringBuilder.append(URLEncoder.encode("and startDate = \"" + startDate+"\"", "UTF-8"));
-            urlStringBuilder.append(URLEncoder.encode("and endDate = \"" + endDate + "\"", "UTF-8"));
-
-            urlStringBuilder.append("&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables."
-                    + "org%2Falltableswithkeys&callback=");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        String url = "https://query.yahooapis.com/v1/public/yql?" +
-                "q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22" +
-                symbol +
-                "%22%20and%20" +
-                "startDate%20%3D%20%22" +
-                startDate +
-                "%22%20and%20" +
-                "endDate%20%3D%20%22" +
-                endDate +
-                "%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-
-        Uri.Builder uri = new Uri.Builder();
-        //try {
-            uri.scheme("https")
-                    .authority("query.yahooapis.com")
-                    .appendPath("v1")
-                    .appendPath("public")
-                    .appendPath("yql")
-                    .appendQueryParameter("q","select * from yahoo.finance.historicaldata where symbol = "+ symbol )
-                    .appendQueryParameter("startDate",startDate)
-                    .appendQueryParameter("endDate",endDate)
-                    .appendQueryParameter("format","json")
-                    .appendQueryParameter("env","store://datatables.org/alltableswithkeys")
-                    .appendQueryParameter("callback","");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*
-
-       / url = uri.build().toString();
-        url = urlStringBuilder.toString();
-
-
-        try {
-            url = URLEncoder.encode("https://query.yahooapis.com/v1/public/yql?" +
-                    "q=select * from yahoo.finance.historicaldata where " +
-                    "symbol = \" "+ symbol +"\"" +
-                    " and startDate = \" " + startDate + "\" " +
-                    "and endDate = \" " + endDate + "\"" +
-                    "&format=json&env=store://datatables.org/alltableswithkeys&callback=" , "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*
-
-
-        String url1 = "https://query.yahooapis.com/v1/public/yql?" +
-                "q=select * from yahoo.finance.historicaldata where symbol = \""+ symbol +"\" " +
-                "and startDate = \"" + startDate +"\" " +
-                "and endDate = \""+ endDate +"\"" +
-                "&format=json&env=store://datatables.org/alltableswithkeys&callback=";
-
-    */
-    }
 }

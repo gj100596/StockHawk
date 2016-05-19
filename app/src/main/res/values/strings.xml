@@ -8,6 +8,33 @@
     <string name="symbol_search">Symbol Search</string>
     <string name="content_test">Search for a Stock Symbol</string>
     <string name="input_hint">FB</string>
-    <string name="input_prefill"></string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="symbol_test">Symbol</string>
+
+    <!-- Different Chart Category -->
+    <string name="_1d" translatable="false">1D</string>
+    <string name="_1w" translatable="false">1W</string>
+    <string name="_1m" translatable="false">1M</string>
+    <string name="_1y" translatable="false">1Y</string>
+    <string name="_5y" translatable="false">5Y</string>
+    <string name="max" translatable="false">MAX</string>
+
+    <!-- Description String -->
+    <string name="description_1d">This Button will show Share History of current day only</string>
+    <string name="description_1w">This Button will show Share History of past 1 week</string>
+    <string name="description_1m">This Button will show Share History of past 1 month</string>
+    <string name="description_1y">This Button will show Share History of past 1 year</string>
+    <string name="description_5y">This Button will show Share History of past 5 year</string>
+    <string name="description_max">This Button will show Share History of Max Period</string>
+    <string name="description_fab">This Button will Help to Add new Stock</string>
+
+    <!-- Result Keywords -->
+    <string name="symbol_intent_keyword" translatable="false">Symbol</string>
+    <string name="date_result_keyword" translatable="false">Date</string>
+    <string name="close_result_keyword" translatable="false">close</string>
+    <string name="timestamp_result_keyword" translatable="false">Timestamp</string>
+    <string name="stock_result_keyword" translatable="false">Stock Rate</string>
+    <string name="input_prefill" />
+    <string name="loading_chart">Data is Loading Please Wait!</string>
+
 </resources>

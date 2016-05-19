@@ -86,7 +86,7 @@ public class WidgetRemoteService extends RemoteViewsService {
                 views.setTextViewText(R.id.change, data.getString(data.getColumnIndex(QuoteColumns.PERCENT_CHANGE)));
 
                 final Intent fillInIntent = new Intent();
-                fillInIntent.putExtra("Symbol", data.getString(data.getColumnIndex(QuoteColumns.SYMBOL)));
+                fillInIntent.putExtra(getString(R.string.symbol_intent_keyword), data.getString(data.getColumnIndex(QuoteColumns.SYMBOL)));
                 views.setOnClickFillInIntent(R.id.customListParent, fillInIntent);
 
                 return views;
